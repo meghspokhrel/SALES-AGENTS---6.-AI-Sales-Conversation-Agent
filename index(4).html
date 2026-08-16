@@ -1,0 +1,625 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="OrionPulse AI Sales Conversation Agent — intelligent sales conversations, qualification, objection handling and human handoff.">
+  <meta name="theme-color" content="#05070b">
+  <title>AI Sales Conversation Agent — OrionPulse</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root{
+      --bg:#05070b;
+      --surface:#090d14;
+      --surface2:#0e141e;
+      --text:#f6f8fc;
+      --muted:#8c97a9;
+      --line:rgba(255,255,255,.09);
+      --line2:rgba(255,255,255,.16);
+      --blue:#5c7dff;
+      --cyan:#67dcff;
+      --violet:#9e7cff;
+      --green:#54d6a0;
+      --amber:#f0c66b;
+      --radius:22px;
+      --shadow:0 35px 100px rgba(0,0,0,.48);
+    }
+
+    *{box-sizing:border-box;margin:0;padding:0}
+    html{scroll-behavior:smooth}
+    body{
+      color:var(--text);
+      background:
+        radial-gradient(circle at 78% 3%,rgba(92,125,255,.18),transparent 31rem),
+        radial-gradient(circle at 8% 42%,rgba(103,220,255,.065),transparent 27rem),
+        var(--bg);
+      font-family:"DM Sans",sans-serif;
+      line-height:1.6;
+      overflow-x:hidden;
+    }
+    body:before{
+      content:"";position:fixed;inset:0;pointer-events:none;opacity:.2;
+      background-image:
+        linear-gradient(rgba(255,255,255,.025) 1px,transparent 1px),
+        linear-gradient(90deg,rgba(255,255,255,.025) 1px,transparent 1px);
+      background-size:48px 48px;
+      mask-image:linear-gradient(to bottom,#000,transparent 85%);
+    }
+
+    a{text-decoration:none;color:inherit}
+    button,input,textarea,select{font:inherit}
+    .container{width:min(1180px,92%);margin:auto}
+
+    .eyebrow{
+      display:inline-flex;align-items:center;gap:8px;
+      padding:7px 11px;border:1px solid var(--line);border-radius:999px;
+      background:rgba(255,255,255,.035);color:#cbd4e3;
+      font-size:11px;font-weight:800;letter-spacing:.09em;text-transform:uppercase
+    }
+    .pulse{
+      width:7px;height:7px;border-radius:50%;background:var(--green);
+      box-shadow:0 0 16px var(--green)
+    }
+
+    nav{
+      position:fixed;z-index:50;top:16px;left:50%;transform:translateX(-50%);
+      width:min(1120px,92%);height:64px;padding:0 18px;
+      display:flex;align-items:center;justify-content:space-between;
+      border:1px solid var(--line);border-radius:18px;
+      background:rgba(6,9,14,.75);backdrop-filter:blur(24px);
+      box-shadow:0 18px 60px rgba(0,0,0,.25)
+    }
+    .brand{font:800 20px Manrope,sans-serif;letter-spacing:-.05em}
+    .brand span{color:var(--cyan)}
+    .navlinks{display:flex;gap:24px;color:#aab5c6;font-size:13px}
+    .navlinks a:hover{color:#fff}
+
+    .primary,.nav-cta{
+      display:inline-flex;justify-content:center;align-items:center;
+      color:#fff;border:0;cursor:pointer;
+      background:linear-gradient(135deg,#587aff,#8066ff);
+      box-shadow:0 14px 35px rgba(92,125,255,.23);
+      transition:.2s
+    }
+    .nav-cta{padding:10px 15px;border-radius:11px;font-size:12px;font-weight:800}
+    .primary{padding:14px 19px;border-radius:13px;font-weight:800}
+    .primary:hover,.nav-cta:hover{transform:translateY(-2px);filter:brightness(1.08)}
+    .secondary{
+      display:inline-flex;justify-content:center;align-items:center;
+      padding:13px 18px;border-radius:13px;
+      border:1px solid var(--line2);background:rgba(255,255,255,.04);
+      color:#e8ecf4;cursor:pointer
+    }
+
+    .hero{padding:178px 0 94px}
+    .hero-grid{display:grid;grid-template-columns:1.04fr .96fr;gap:68px;align-items:center}
+    h1,h2,h3{font-family:Manrope,sans-serif;letter-spacing:-.045em;line-height:1.06}
+    h1{font-size:clamp(48px,7vw,82px);margin:21px 0}
+    h1 em{
+      font-style:normal;
+      background:linear-gradient(100deg,#fff 20%,#8fb8ff 56%,#ad91ff);
+      -webkit-background-clip:text;background-clip:text;color:transparent
+    }
+    .hero-copy{max-width:680px;color:var(--muted);font-size:18px}
+    .actions{display:flex;gap:11px;flex-wrap:wrap;margin-top:31px}
+    .micro{display:flex;gap:16px;flex-wrap:wrap;margin-top:21px;color:#6e7a8d;font-size:11px}
+    .micro span:before{content:"✓";color:var(--green);margin-right:6px}
+
+    .console{
+      position:relative;padding:15px;border:1px solid var(--line);border-radius:28px;
+      background:linear-gradient(145deg,rgba(255,255,255,.065),rgba(255,255,255,.018));
+      box-shadow:var(--shadow);overflow:hidden
+    }
+    .console:after{
+      content:"";position:absolute;width:280px;height:280px;right:-100px;top:-100px;
+      border-radius:50%;background:rgba(92,125,255,.18);filter:blur(70px)
+    }
+    .window{
+      position:relative;z-index:1;background:#070b11;border:1px solid var(--line);
+      border-radius:20px;overflow:hidden
+    }
+    .windowbar{
+      height:48px;display:flex;align-items:center;gap:7px;padding:0 15px;
+      border-bottom:1px solid var(--line)
+    }
+    .windowbar i{width:8px;height:8px;border-radius:50%;background:#4d586a}
+    .windowtitle{margin:auto;color:#697488;font-size:11px}
+    .active{display:flex;align-items:center;gap:6px;color:#8da0b8;font-size:10px}
+    .active .pulse{width:6px;height:6px}
+
+    .chat{padding:19px;display:grid;gap:10px}
+    .bubble{
+      max-width:87%;padding:12px 14px;border-radius:14px;font-size:12px
+    }
+    .ai{background:#101721;border:1px solid var(--line);color:#dce5f1}
+    .user{justify-self:end;background:linear-gradient(135deg,#526fff,#7962ff);color:#fff}
+    .analysis{
+      padding:14px;border:1px solid rgba(103,220,255,.13);
+      border-radius:15px;background:rgba(103,220,255,.035)
+    }
+    .analysis-top{display:flex;justify-content:space-between;gap:15px}
+    .analysis small{color:#718096;font-size:9px;letter-spacing:.08em}
+    .score{color:#69dfad;font-weight:800;font-size:11px}
+    .bar{height:5px;border-radius:20px;background:#18202c;margin-top:9px;overflow:hidden}
+    .bar span{display:block;width:84%;height:100%;border-radius:20px;background:linear-gradient(90deg,var(--blue),var(--cyan))}
+    .chips{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+    .chip{padding:5px 7px;border:1px solid var(--line);border-radius:8px;background:#111a27;color:#aab6c8;font-size:9px}
+    .typing{
+      display:flex;gap:4px;width:max-content;padding:10px 13px;
+      border:1px solid var(--line);background:#101721;border-radius:14px
+    }
+    .typing i{
+      width:5px;height:5px;border-radius:50%;background:#8492a6;
+      animation:t 1s infinite
+    }
+    .typing i:nth-child(2){animation-delay:.15s}
+    .typing i:nth-child(3){animation-delay:.3s}
+    @keyframes t{50%{opacity:.2;transform:translateY(-2px)}}
+
+    section{padding:90px 0}
+    .section-head{max-width:730px;margin-bottom:38px}
+    .section-head h2{font-size:clamp(35px,5vw,53px);margin:15px 0}
+    .section-head p{color:var(--muted)}
+
+    .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .card{
+      padding:25px;border:1px solid var(--line);border-radius:var(--radius);
+      background:linear-gradient(145deg,rgba(255,255,255,.052),rgba(255,255,255,.015));
+      transition:.25s
+    }
+    .card:hover{transform:translateY(-4px);border-color:rgba(120,155,255,.27)}
+    .icon{
+      width:42px;height:42px;display:grid;place-items:center;margin-bottom:19px;
+      border-radius:13px;background:rgba(92,125,255,.11);
+      border:1px solid rgba(92,125,255,.2);font-size:17px
+    }
+    .card h3{font-size:18px;margin-bottom:8px}
+    .card p{font-size:13px;color:var(--muted)}
+
+    .journey{display:grid;grid-template-columns:repeat(6,1fr);gap:9px}
+    .step{padding:20px;border:1px solid var(--line);border-radius:18px;background:var(--surface)}
+    .step .num{font:800 10px Manrope;color:#87a5ff}
+    .step h3{font-size:15px;margin:10px 0}.step p{font-size:11px;color:var(--muted)}
+
+    .demo{
+      display:grid;grid-template-columns:.8fr 1.2fr;gap:20px;
+      padding:27px;border:1px solid var(--line);border-radius:28px;
+      background:rgba(255,255,255,.035)
+    }
+    .demo h2{font-size:42px;margin:18px 0}
+    .demo-copy p{color:var(--muted)}
+    .qualify{
+      margin-top:25px;padding:17px;border:1px solid var(--line);
+      border-radius:16px;background:rgba(255,255,255,.025)
+    }
+    .qualify strong{font-size:12px}.qualify p{font-size:12px;margin-top:5px;color:var(--muted)}
+    form{display:grid;gap:11px}
+    input,textarea,select{
+      width:100%;padding:13px 14px;border:1px solid var(--line);
+      border-radius:12px;background:#080c12;color:#fff;outline:none
+    }
+    input:focus,textarea:focus,select:focus{
+      border-color:rgba(103,220,255,.43);box-shadow:0 0 0 3px rgba(103,220,255,.06)
+    }
+    textarea{min-height:108px;resize:vertical}
+    .row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .success{
+      display:none;padding:13px;border-radius:12px;
+      border:1px solid rgba(84,214,160,.25);background:rgba(84,214,160,.07);
+      color:#aaf0d3;font-size:12px
+    }
+    .form-note{font-size:10px;color:#657184}
+
+    .plans{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+    .plan{padding:28px;border:1px solid var(--line);border-radius:22px;background:var(--surface)}
+    .plan.featured{
+      border-color:rgba(92,125,255,.48);
+      background:linear-gradient(160deg,rgba(92,125,255,.12),rgba(255,255,255,.02))
+    }
+    .price{font:800 34px Manrope;margin:15px 0}.price small{font:400 12px;color:var(--muted)}
+    .plan ul{list-style:none;display:grid;gap:10px;margin:20px 0 25px;color:#adb7c7;font-size:13px}
+    .plan li:before{content:"✓";color:var(--green);margin-right:9px}
+
+    .handoff{
+      display:grid;grid-template-columns:1fr 1fr;gap:16px
+    }
+    .handoff-card{
+      padding:27px;border:1px solid var(--line);border-radius:22px;background:var(--surface)
+    }
+    .handoff-card h3{font-size:21px;margin:13px 0 8px}
+    .handoff-card p{font-size:13px;color:var(--muted)}
+    .handoff-card .tag{
+      display:inline-block;margin-top:18px;padding:6px 8px;border-radius:8px;
+      background:rgba(85,214,160,.08);border:1px solid rgba(85,214,160,.15);
+      color:#8ce3be;font-size:10px;font-weight:700
+    }
+
+    .contact-box{
+      display:grid;grid-template-columns:1fr auto;align-items:center;gap:25px;
+      padding:35px;border:1px solid var(--line);border-radius:28px;
+      background:radial-gradient(circle at 80% 0%,rgba(92,125,255,.16),transparent 30rem),var(--surface)
+    }
+    .contact-box h2{font-size:39px;margin:13px 0}
+    .contact-box p{color:var(--muted);max-width:650px}
+    .contact-actions{display:flex;gap:10px;flex-wrap:wrap}
+    .whatsapp{background:linear-gradient(135deg,#1ca76a,#38d493);box-shadow:0 14px 35px rgba(39,196,121,.18)}
+
+    footer{border-top:1px solid var(--line);padding:38px 0;color:#687486;font-size:11px}
+    .footer-row{display:flex;justify-content:space-between;gap:20px}
+
+    @media(max-width:1000px){
+      .hero-grid,.demo,.contact-box{grid-template-columns:1fr}
+      .journey{grid-template-columns:repeat(3,1fr)}
+      .grid3,.plans{grid-template-columns:1fr 1fr}
+    }
+    @media(max-width:700px){
+      .navlinks{display:none}
+      .hero{padding-top:135px}
+      .grid3,.plans,.journey,.handoff,.row{grid-template-columns:1fr}
+      h1{font-size:48px}
+      .footer-row{flex-direction:column}
+    }
+  </style>
+</head>
+
+<body>
+  <nav>
+    <a class="brand" href="#top">Orion<span>Pulse</span></a>
+    <div class="navlinks">
+      <a href="#features">Capabilities</a>
+      <a href="#how">How it works</a>
+      <a href="#demo">Live demo</a>
+      <a href="#plans">Plans</a>
+    </div>
+    <a class="nav-cta" href="#demo">Try Agent</a>
+  </nav>
+
+  <main id="top">
+
+    <section class="hero">
+      <div class="container hero-grid">
+        <div>
+          <span class="eyebrow"><span class="pulse"></span> Sales Agent 06 · AI Sales Conversation</span>
+          <h1>Your AI salesperson for <em>every conversation.</em></h1>
+          <p class="hero-copy">
+            Engage prospects, understand their needs, answer questions, handle common objections,
+            qualify buying intent and hand high-value conversations to your human sales team.
+          </p>
+
+          <div class="actions">
+            <a class="primary" href="#demo">Run a live demo →</a>
+            <a class="secondary" href="#how">See how it works</a>
+          </div>
+
+          <div class="micro">
+            <span>Natural conversations</span>
+            <span>Lead qualification</span>
+            <span>Human handoff</span>
+          </div>
+        </div>
+
+        <div class="console">
+          <div class="window">
+            <div class="windowbar">
+              <i></i><i></i><i></i>
+              <span class="windowtitle">OrionPulse / AI Sales Conversation Agent</span>
+              <span class="active"><span class="pulse"></span> Online</span>
+            </div>
+
+            <div class="chat">
+              <div class="bubble user">How much does your website development service cost?</div>
+
+              <div class="bubble ai">
+                It depends on the type of website and functionality you need.
+                Are you looking for a business website, an e-commerce store, or something more customized?
+              </div>
+
+              <div class="bubble user">A business website. Around ₹50,000 budget.</div>
+
+              <div class="analysis">
+                <div class="analysis-top">
+                  <small>LIVE LEAD QUALIFICATION</small>
+                  <span class="score">84% FIT</span>
+                </div>
+                <div class="bar"><span></span></div>
+                <div class="chips">
+                  <span class="chip">Budget identified</span>
+                  <span class="chip">Service fit</span>
+                  <span class="chip">High intent</span>
+                </div>
+              </div>
+
+              <div class="bubble ai">
+                That fits within the range of projects we can help with.
+                How soon are you looking to launch?
+              </div>
+
+              <div class="bubble user">Within a month.</div>
+
+              <div class="typing"><i></i><i></i><i></i></div>
+
+              <div class="bubble ai">
+                Great — that's a strong fit. I can pass your requirements to our team
+                so they can discuss the exact scope and next steps with you.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Sales intelligence</span>
+          <h2>Every conversation can move the deal forward.</h2>
+          <p>
+            The agent is designed around real sales conversations — not just answering questions.
+          </p>
+        </div>
+
+        <div class="grid3">
+          <div class="card"><div class="icon">◌</div><h3>Natural Conversation</h3><p>Understand questions and respond naturally while maintaining relevant conversation context.</p></div>
+          <div class="card"><div class="icon">◎</div><h3>Lead Qualification</h3><p>Ask about need, budget, timeline and decision-making context to identify serious opportunities.</p></div>
+          <div class="card"><div class="icon">✦</div><h3>Objection Handling</h3><p>Respond to common concerns such as price, timing, uncertainty and competitor comparisons.</p></div>
+          <div class="card"><div class="icon">▣</div><h3>Product Knowledge</h3><p>Use your approved business information to explain services, packages, features and FAQs.</p></div>
+          <div class="card"><div class="icon">◈</div><h3>Intent Detection</h3><p>Classify conversations as curious, interested, qualified, ready to buy or requiring human support.</p></div>
+          <div class="card"><div class="icon">↗</div><h3>Human Handoff</h3><p>Escalate high-intent prospects or sensitive questions to the right person at the right time.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="how">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Conversation engine</span>
+          <h2>From first question to qualified opportunity.</h2>
+          <p>The customer only needs to understand the outcome. OrionPulse handles the underlying automation.</p>
+        </div>
+
+        <div class="journey">
+          <div class="step"><span class="num">01</span><h3>Engage</h3><p>Prospect starts a conversation.</p></div>
+          <div class="step"><span class="num">02</span><h3>Understand</h3><p>AI identifies the actual need.</p></div>
+          <div class="step"><span class="num">03</span><h3>Respond</h3><p>Relevant answer or sales response.</p></div>
+          <div class="step"><span class="num">04</span><h3>Qualify</h3><p>Need, budget and timeline.</p></div>
+          <div class="step"><span class="num">05</span><h3>Score</h3><p>Buying intent is assessed.</p></div>
+          <div class="step"><span class="num">06</span><h3>Handoff</h3><p>Human takes over when needed.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <div class="container">
+        <div class="handoff">
+          <div class="handoff-card">
+            <span class="eyebrow">AI handles</span>
+            <h3>Routine sales conversations.</h3>
+            <p>FAQs, product information, initial qualification, common objections, basic requirements and first-stage discovery.</p>
+            <span class="tag">AUTOMATE THE REPETITIVE</span>
+          </div>
+
+          <div class="handoff-card">
+            <span class="eyebrow">Human handles</span>
+            <h3>High-value decisions.</h3>
+            <p>Complex negotiations, sensitive questions, final proposals, closing conversations and situations requiring human judgment.</p>
+            <span class="tag">ESCALATE THE IMPORTANT</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="demo">
+      <div class="container">
+        <div class="demo">
+          <div class="demo-copy">
+            <span class="eyebrow">Interactive onboarding</span>
+            <h2>Teach the agent what you sell.</h2>
+            <p>
+              Enter a sample business requirement and sales scenario.
+              This front-end experience is designed to become the onboarding layer for the real AI sales system.
+            </p>
+
+            <div class="qualify">
+              <strong>Example qualification signals</strong>
+              <p>Requirement · Budget · Timeline · Decision maker · Location · Buying intent</p>
+            </div>
+          </div>
+
+          <form id="salesForm">
+            <div class="row">
+              <input name="name" required placeholder="Your name">
+              <input name="email" type="email" required placeholder="Business email">
+            </div>
+
+            <div class="row">
+              <input name="business" required placeholder="Business / company">
+              <input name="website" placeholder="Website (optional)">
+            </div>
+
+            <input name="product" required placeholder="What product/service should the AI sell?">
+
+            <select name="salesGoal" required>
+              <option value="">Primary sales goal</option>
+              <option>Generate qualified leads</option>
+              <option>Book sales calls</option>
+              <option>Sell a product</option>
+              <option>Qualify inbound enquiries</option>
+              <option>Handle sales FAQs</option>
+            </select>
+
+            <textarea name="knowledge" placeholder="Describe your offer, pricing, FAQs or key information the agent should know."></textarea>
+
+            <div class="row">
+              <select name="budget">
+                <option value="">Typical customer budget</option>
+                <option>Under ₹10,000</option>
+                <option>₹10,000–₹50,000</option>
+                <option>₹50,000–₹1 lakh</option>
+                <option>₹1 lakh+</option>
+              </select>
+
+              <select name="handoff">
+                <option value="">Preferred handoff</option>
+                <option>Email</option>
+                <option>WhatsApp</option>
+                <option>Sales team</option>
+                <option>CRM</option>
+              </select>
+            </div>
+
+            <button class="primary" type="submit">Build my sales conversation →</button>
+
+            <div class="success" id="success">
+              Your AI Sales Conversation Agent request has been captured. Connect this form to your backend/API to generate the real sales workflow.
+            </div>
+
+            <div class="form-note">
+              By submitting, you agree to be contacted by OrionPulse regarding AI automation services.
+            </div>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <section id="plans">
+      <div class="container">
+        <div class="section-head">
+          <span class="eyebrow">Deployment options</span>
+          <h2>Sell the outcome, not the technology.</h2>
+          <p>Offer the agent as a ready product, a customized implementation, or a managed AI sales system.</p>
+        </div>
+
+        <div class="plans">
+          <div class="plan">
+            <h3>Starter</h3>
+            <div class="price">₹999 <small>+</small></div>
+            <ul>
+              <li>Hosted agent page</li>
+              <li>Basic sales conversation flow</li>
+              <li>Setup instructions</li>
+              <li>Demo access</li>
+            </ul>
+            <a class="secondary" href="#demo">Get started</a>
+          </div>
+
+          <div class="plan featured">
+            <span class="eyebrow">Recommended</span>
+            <h3 style="margin-top:14px">Business</h3>
+            <div class="price">₹5,000+ <small>setup</small></div>
+            <ul>
+              <li>Customized sales agent</li>
+              <li>Business branding</li>
+              <li>Website integration</li>
+              <li>Lead notifications</li>
+              <li>Basic automation</li>
+            </ul>
+            <a class="primary" href="#demo">Request setup</a>
+          </div>
+
+          <div class="plan">
+            <h3>Managed</h3>
+            <div class="price">₹20,000+ <small>custom</small></div>
+            <ul>
+              <li>Custom AI sales workflow</li>
+              <li>CRM / email integrations</li>
+              <li>Advanced automation</li>
+              <li>Optimization</li>
+              <li>Ongoing support</li>
+            </ul>
+            <a class="secondary" href="#contact">Talk to OrionPulse</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="contact">
+      <div class="container">
+        <div class="contact-box">
+          <div>
+            <span class="eyebrow">Deploy with OrionPulse</span>
+            <h2>Give your sales team an AI conversation layer.</h2>
+            <p>
+              Want the agent customized around your products, services, pricing and sales process?
+              Start a conversation with OrionPulse.
+            </p>
+          </div>
+
+          <div class="contact-actions">
+            <a class="primary" href="mailto:service@orionpulse.co.in?subject=AI%20Sales%20Conversation%20Agent%20Setup">Email OrionPulse</a>
+            <a class="primary whatsapp" target="_blank" rel="noopener"
+               href="https://wa.me/919862903690?text=Hi%20OrionPulse%2C%20I%27m%20interested%20in%20the%20AI%20Sales%20Conversation%20Agent.">
+              WhatsApp Us
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <footer>
+    <div class="container footer-row">
+      <span>© 2026 OrionPulse · AI Automation · Digital Marketing · Web Design · SEO</span>
+      <span>service@orionpulse.co.in · +91 98629 03690</span>
+    </div>
+  </footer>
+
+  <script>
+    /*
+      ORIONPULSE — AI SALES CONVERSATION AGENT
+      ---------------------------------------
+      This page is the premium front-end / onboarding layer.
+
+      Production integration:
+      1. POST the form data to your OrionPulse backend.
+      2. Store business/product knowledge securely.
+      3. Connect the approved AI model and business knowledge base.
+      4. Add conversation/session memory.
+      5. Add your approved communication channels.
+      6. Classify lead intent and qualification.
+      7. Trigger human handoff for high-value or sensitive conversations.
+
+      Suggested API:
+      POST /api/sales-conversation-agent
+
+      OrionPulse business email:
+      service@orionpulse.co.in
+
+      OrionPulse WhatsApp:
+      +919862903690
+    */
+
+    const form = document.getElementById("salesForm");
+    const success = document.getElementById("success");
+
+    form.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      const data = Object.fromEntries(new FormData(form).entries());
+
+      // Replace this demo section with your real backend:
+      //
+      // const response = await fetch("/api/sales-conversation-agent", {
+      //   method: "POST",
+      //   headers: {"Content-Type": "application/json"},
+      //   body: JSON.stringify(data)
+      // });
+      //
+      // const result = await response.json();
+
+      console.log("OrionPulse AI Sales Conversation Agent:", data);
+
+      success.style.display = "block";
+      form.reset();
+
+      setTimeout(() => {
+        success.scrollIntoView({behavior:"smooth", block:"nearest"});
+      }, 50);
+    });
+  </script>
+</body>
+</html>
